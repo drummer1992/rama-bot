@@ -21,11 +21,13 @@ module.exports = async (msg, match) => {
   assert(trainer, 'Тренер не знайдений 🤷‍♂')
   assert(trainers.includes(trainer.id), `${msg.username} вибачай але ти не тренер, і навіть не адмін 🤷‍♂`)
 
-  const [hours, minutes] = (match[2] || TIME_BY_DEFAULT).split(':').map(Number)
+  const time = match[2] || TIME_BY_DEFAULT
+
+  const [hours, minutes] = time.split(':').map(Number)
 
   const dateNow = getDate()
 
-  const invalidTimeMessage = `Коли це ти зібрався тренуватись? В нас немає машини часу 🤣. ${hours}:${minutes}`
+  const invalidTimeMessage = `Коли це ти зібрався тренуватись? В нас немає машини часу 🤣. ${time}`
 
   assert(dateNow.getHours() <= hours, invalidTimeMessage)
   assert(dateNow.getMinutes() <= minutes, invalidTimeMessage)
