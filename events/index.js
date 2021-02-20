@@ -17,6 +17,10 @@ const EVENTS = [
   {
     regExp: /^\/addtraining ([bd]-[12])(\s\d\d:\d\d)?$/g,
     module: require('./on-add-training'),
+  },
+  {
+    regExp: /\/info/,
+    module: require('./on-info'),
   }
 ]
 

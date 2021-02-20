@@ -9,7 +9,7 @@ const schema = new mongoose.Schema({
   group    : mongoose.Schema.Types.String,
   plus     : {
     type   : mongoose.Schema.Types.Boolean,
-    default: true,
+    default: false,
   },
   id       : {
     type    : mongoose.Schema.Types.String,

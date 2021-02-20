@@ -33,6 +33,7 @@ module.exports = async (msg, match) => {
   assert(dateNow.getMinutes() <= minutes, invalidTimeMessage)
 
   trainer.group = group
+  trainer.plus = true
 
   await trainer.save()
 
