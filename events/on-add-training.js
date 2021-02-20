@@ -30,7 +30,7 @@ module.exports = async (msg, match) => {
   const invalidTimeMessage = `Коли це ти зібрався тренуватись? В нас немає машини часу 🤣. ${time}`
 
   assert(dateNow.getHours() <= hours, invalidTimeMessage)
-  assert(dateNow.getMinutes() <= minutes, invalidTimeMessage)
+  assert(dateNow.getMinutes() < minutes, invalidTimeMessage)
 
   trainer.group = group
   trainer.plus = true
