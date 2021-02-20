@@ -3,9 +3,9 @@
 const assert = require('assert')
 const timer = require('../utils/timer')
 const reminding = require('./reminding')
-const { setTimezoneOffset, isLocal, UA_TIME_ZONE_OFFSET } = require("../utils/date")
+const { getDate } = require("../utils/date")
 
-const hourMessage = group => `Група: ${group} у вас трєня 💪 через години ⏰, гостріть лижі ⛷ і не забувайте водичку 💧`
+const hourMessage = group => `Група: ${group} у вас трєня 💪 через годину ⏰, гостріть лижі ⛷ і не забувайте водичку 💧`
 const trainingStartMessage = group => `Група: ${group} Удачної трєні 💪, і памятайте, багато бурпєй не буває 😜`
 
 const TIME_BY_DEFAULT = '19:30'
@@ -23,7 +23,7 @@ module.exports = async (msg, match) => {
 
   const [hours, minutes] = (match[2] || TIME_BY_DEFAULT).split(':').map(Number)
 
-  const dateNow = isLocal() ? new Date() : setTimezoneOffset(new Date(), UA_TIME_ZONE_OFFSET)
+  const dateNow = getDate()
 
   const invalidTimeMessage = `Коли це ти зібрався тренуватись? В нас немає машини часу 🤣. ${hours}:${minutes}`
 
@@ -37,16 +37,11 @@ module.exports = async (msg, match) => {
 
   const users = await User.find({ group })
 
-  const date = new Date(dateNow)
-
-  date.setHours(hours)
-  date.setMinutes(minutes)
-
   await Training.create({
     trainer,
     users,
     group,
-    date,
+    date: getDate.withTime(hours, minutes),
   })
 
   let message = 'Здоров бандіти!\n' +

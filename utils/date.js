@@ -89,3 +89,18 @@ exports.setTimezoneOffset = (date, timezoneOffset) => {
 exports.isLocal = () => {
   return new Date().getTimezoneOffset() + UA_TIME_ZONE_OFFSET * 60
 }
+
+exports.getDate = () => {
+  const now = new Date()
+
+  return exports.isLocal() ? now : exports.setTimezoneOffset(now, UA_TIME_ZONE_OFFSET)
+}
+
+exports.getDate.withTime = (hours, minutes) => {
+  const date = exports.getDate()
+
+  date.setHours(hours)
+  date.setMinutes(minutes)
+
+  return date
+}
