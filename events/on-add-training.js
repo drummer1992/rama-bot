@@ -4,8 +4,8 @@ const assert = require('assert')
 const timer = require('../utils/timer')
 const reminding = require('./reminding')
 
-const hourMessage = `Ну шо бандіт, трєня 💪 через години ⏰, гостри лижі ⛷ і не забудь водичку 💧`
-const trainingStartMessage = `Удачної трєні 💪, і помни, багато бурпєй не буває 😜`
+const hourMessage = group => `Група: ${group} у вас трєня 💪 через години ⏰, гостріть лижі ⛷ і не забувайте водичку 💧`
+const trainingStartMessage = group => `Група: ${group} Удачної трєні 💪, і памятайте, багато бурпєй не буває 😜`
 
 const getTime = (hours, minutes) => {
   if (hours && minutes) {
@@ -58,10 +58,10 @@ module.exports = async (msg, match) => {
         .join('\n')
 
     if (hours - 1 !== dateNow.getHours()) {
-      timer({ hours: hours - 1, minutes })(interval => reminding(interval, hourMessage))
+      timer({ hours: hours - 1, minutes })(interval => reminding(interval, msg.chat.id, hourMessage(group)))
     }
 
-    timer({ hours: hours, minutes })(interval => reminding(interval, trainingStartMessage))
+    timer({ hours: hours, minutes })(interval => reminding(interval, msg.chat.id, trainingStartMessage(group)))
   }
 
   message += '\n\nПостав ➕ якщо прийдеш, або ➖ раз падаєш на мороз 💩'
