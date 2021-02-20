@@ -7,15 +7,15 @@ const EVENTS = [
     module: require('./on-start'),
   },
   {
-    regExp: /^[+-➕➖]$/,
+    regExp: /^[+-➕➖]$/i,
     module: require('./on-plus'),
   },
   {
-    regExp: /^\/setgroup ([bd]-[12])$/g,
+    regExp: /^\/setgroup(\s[вдя]-[12])?/g,
     module: require('./on-set-group'),
   },
   {
-    regExp: /^\/addtraining ([bd]-[12])(\s\d\d:\d\d)?$/g,
+    regExp: /^\/addtraining ([вдя]-[12])(\s\d\d:\d\d)?$/g,
     module: require('./on-add-training'),
   },
   {

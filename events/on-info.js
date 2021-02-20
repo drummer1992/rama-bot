@@ -16,12 +16,13 @@ module.exports = async msg => {
   const training = await Training.findOne({
     date: { $gt: Date.now() },
   }).sort({ date: -1 })
-    .populate('users')
 
   assert(training, 'Наступне тренування ще не створено')
 
+  const users = await User.find({ group: training.group })
+
   const message = `Найближче тренування в групи ${training.group}:\n` +
-    training.users.map(pickName)
+    users.map(pickName)
       .filter(Boolean)
       .join('\n')
 

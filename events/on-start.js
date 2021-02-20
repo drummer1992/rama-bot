@@ -2,7 +2,7 @@
 
 const ALREADY_EXISTS = 11000
 
-module.exports = async (msg) => {
+module.exports = async msg => {
   try {
     await User.create({
       id       : msg.from.id,
@@ -15,7 +15,7 @@ module.exports = async (msg) => {
     await Bot.sendMessage(msg.chat.id, `Человечек ${msg.username} на контроле 😎`)
   } catch (e) {
     if (e.code === ALREADY_EXISTS) {
-      e.message = `Дело на ${msg.username} уже было в картотеке 😎`
+      e.message = `Человечек ${msg.username} уже и так на контроле 😎`
     }
 
     throw e

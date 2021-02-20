@@ -3,34 +3,29 @@
 const assert = require('assert')
 const timer = require('../utils/timer')
 const reminding = require('./reminding')
+const { setTimezoneOffset, isLocal, UA_TIME_ZONE_OFFSET } = require("../utils/date")
 
 const hourMessage = group => `Група: ${group} у вас трєня 💪 через години ⏰, гостріть лижі ⛷ і не забувайте водичку 💧`
 const trainingStartMessage = group => `Група: ${group} Удачної трєні 💪, і памятайте, багато бурпєй не буває 😜`
 
-const getTime = (hours, minutes) => {
-  if (hours && minutes) {
-    const date = new Date()
+const TIME_BY_DEFAULT = '19:30'
 
-    date.setHours(hours)
-    date.setMinutes(minutes)
-
-    return date
-  }
-}
+const trainers = [process.env.TRAINER_ID, process.env.ADMIN_ID].filter(Boolean)
 
 module.exports = async (msg, match) => {
-  const trainer = await User.findOne({ id: msg.from.id })
-
-  assert(trainer, 'Тренер не знайдений 🤷‍♂')
-  assert(trainer.id === process.env.TRAINER_ID, `${msg.username} вибачай але ти не тренер 🤷‍♂`)
-
   const group = match[1]
 
-  const [hours = 19, minutes = 30] = (match[2] || '').split(':').map(Number)
+  const trainer = await User.findOne({ id: msg.from.id })
 
-  const dateNow = new Date()
+  assert(trainers.length, 'Ще не доданий жоден тренер 🤷‍♂')
+  assert(trainer, 'Тренер не знайдений 🤷‍♂')
+  assert(trainers.includes(trainer.id), `${msg.username} вибачай але ти не тренер, і навіть не адмін 🤷‍♂`)
 
-  const invalidTimeMessage = `Коли це ти зібрався тренуватись? ${match[2]} 🤣`
+  const [hours, minutes] = (match[2] || TIME_BY_DEFAULT).split(':').map(Number)
+
+  const dateNow = isLocal() ? new Date() : setTimezoneOffset(new Date(), UA_TIME_ZONE_OFFSET)
+
+  const invalidTimeMessage = `Коли це ти зібрався тренуватись? В нас немає машини часу 🤣. ${hours}:${minutes}`
 
   assert(dateNow.getHours() <= hours, invalidTimeMessage)
   assert(dateNow.getMinutes() <= minutes, invalidTimeMessage)
@@ -42,7 +37,10 @@ module.exports = async (msg, match) => {
 
   const users = await User.find({ group })
 
-  const date = getTime(hours, minutes)
+  const date = new Date(dateNow)
+
+  date.setHours(hours)
+  date.setMinutes(minutes)
 
   await Training.create({
     trainer,

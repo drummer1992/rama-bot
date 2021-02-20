@@ -5,6 +5,8 @@ const MINUTE = exports.MINUTE = SECOND * 60
 const HOUR = exports.HOUR = MINUTE * 60
 const DAY = exports.DAY = HOUR * 24
 
+const UA_TIME_ZONE_OFFSET = exports.UA_TIME_ZONE_OFFSET = 2
+
 const isLeapYear = year =>
   ((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0)
 
@@ -82,4 +84,8 @@ exports.setTimezoneOffset = (date, timezoneOffset) => {
   const timezoneDifference = timezoneOffset * 60 + targetDate.getTimezoneOffset()
 
   return exports.addMinutes(targetDate, timezoneDifference)
+}
+
+exports.isLocal = () => {
+  return new Date().getTimezoneOffset() + UA_TIME_ZONE_OFFSET * 60
 }
