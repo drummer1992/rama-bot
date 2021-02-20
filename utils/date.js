@@ -87,7 +87,7 @@ exports.setTimezoneOffset = (date, timezoneOffset) => {
 }
 
 exports.isLocal = () => {
-  return new Date().getTimezoneOffset() + UA_TIME_ZONE_OFFSET * 60
+  return (UA_TIME_ZONE_OFFSET * 60 + new Date().getTimezoneOffset()) === 0
 }
 
 exports.getDate = () => {
