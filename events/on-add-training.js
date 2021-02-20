@@ -21,6 +21,9 @@ const getTime = (hours, minutes) => {
 module.exports = async (msg, match) => {
   const trainer = await User.findOne({ id: msg.from.id })
 
+  assert(trainer, 'Тренер не знайдений 🤷‍♂')
+  assert(trainer.id === process.env.TRAINER_ID, `${msg.username} вибачай але ти не тренер 🤷‍♂`)
+
   const group = match[1]
 
   const [hours = 19, minutes = 30] = (match[2] || '').split(':').map(Number)
