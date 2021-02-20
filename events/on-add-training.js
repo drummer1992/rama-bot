@@ -52,7 +52,7 @@ module.exports = async (msg, match) => {
 
   if (users.length) {
     message += `В групу ${group} входять:\n` +
-      users.map(user => user.username && `@${user.username}`)
+      users.map(user =>  user.firstName || user.lastName || user.username)
         .filter(Boolean)
         .join('\n')
 
