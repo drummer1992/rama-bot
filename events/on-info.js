@@ -3,7 +3,7 @@
 const assert = require('assert')
 
 const pickName = user => {
-  let name = user.username && `@${user.username}` || user.firstName
+  let name = user.firstName || user.username || user.lastName
 
   if (name) {
     name += ` ${user.plus ? '➕' : '➖'}`
