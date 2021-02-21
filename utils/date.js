@@ -90,8 +90,8 @@ exports.isLocal = () => {
   return (UA_TIME_ZONE_OFFSET * 60 + new Date().getTimezoneOffset()) === 0
 }
 
-exports.getDate = () => {
-  const now = new Date()
+exports.getDate = date => {
+  const now = date || new Date()
 
   return exports.isLocal() ? now : exports.setTimezoneOffset(now, UA_TIME_ZONE_OFFSET)
 }
