@@ -39,6 +39,10 @@ module.exports = async msg => {
   trainer.group = group
   trainer.plus = true
 
+  await User.updateMany({
+    id: { $ne: trainer.id },
+  }, { $set: { plus: false } })
+
   await trainer.save()
 
   const users = await User.find({ group })

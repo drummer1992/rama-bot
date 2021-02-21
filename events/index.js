@@ -3,7 +3,7 @@
 const assert = require("assert")
 const { ABOUT_MESSAGE } = require("../constatnts/messages")
 const { START } = require("../constatnts/routes")
-const { BOSS } = require("../constatnts/emoji")
+const { ROBO } = require("../constatnts/emoji")
 const EVENTS = [
   {
     regExp: /^\/about$/,
@@ -16,6 +16,10 @@ const EVENTS = [
   {
     regExp: /^[+-➕➖]$/i,
     module: require('./on-plus'),
+  },
+  {
+    regExp: /^\/force$/i,
+    module: require('./on-force'),
   },
   {
     regExp: /^\/setgroup/,
@@ -42,7 +46,7 @@ const onTextHandler = event => async (msg, match) => {
 
   try {
     if (!start) {
-      const eMessage = `Человечка сначала нужно поставить на контроль ${BOSS}. ${START}`
+      const eMessage = `Для початку роботи зі мною ${ROBO} Вам потрібно виконати команду ${START}`
 
       assert(await User.exists({ id: msg.from.id }), eMessage)
     }
