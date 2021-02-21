@@ -1,11 +1,13 @@
 'use strict'
 
-const { SET_GROUP, ADD_TRAINING, INFO, FORCE } = require('./routes')
+const { SET_GROUP, CREATE_TRAINING, INFO, FORCE, HELP, CREATE_GROUP } = require('./app')
 const { HAPPY, ROBO, PLUS } = require('./emoji')
 
-exports.ABOUT_MESSAGE = `Привіт ${HAPPY}, я Rama Vandama Bot ${ROBO}, ось список моїх, доступних команд:\n\n`
-  + `${SET_GROUP} (назва групи) - встановити групу в якій ви займаєтеся (надалі, групу можна змінювати)\n`
-  + `${ADD_TRAINING} (назва групи) (години:хвилини) - якщо Ви тренер, цією командою можна створити тренування вказавши групу та час\n`
+exports.HELP_MESSAGE = `Привіт ${HAPPY}, я Rama Vandama Bot ${ROBO}, ось список моїх, доступних команд:\n\n`
+  + `${HELP} - список доступних команд\n`
+  + `${SET_GROUP} - встановити групу в якій ви хочете займатися\n`
+  + `${CREATE_GROUP} - створити групу\n`
+  + `${CREATE_TRAINING} - створити тренування\n`
   + `${INFO} - подивитися інформацію про наступне тренування\n`
-  + `${FORCE} - записатися навіть якщо тренування не у вашої групи\n`
+  + `${FORCE} - записатися на тренування навіть якщо сьогодні воно не у вашої групи\n`
   + `${PLUS} - записатися на тренування\n`

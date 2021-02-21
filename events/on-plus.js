@@ -1,19 +1,19 @@
 'use strict'
 
 const assert = require('assert')
-const { SORRY, PLUS, ARM, ROBO } = require("../constatnts/emoji")
-const { FORCE } = require("../constatnts/routes")
+const { PLUS, ARM } = require("../constatnts/emoji")
+const { FORCE } = require("../constatnts/app")
 const { toSentenceCase } = require("../utils/string")
 
-const rejectMessage = name => `${name}, тренування для твоєї групи ще не створено ${SORRY}\n` +
-  `Якщо ти хочеш всеодно сьогодні прийти на тренування ${ARM} натисни ${FORCE}`
+const rejectMessage = name => `${name}, тренування для твоєї групи ще не створено\n` +
+  `Якщо ви хочете всеодно сьогодні прийти ${ARM}, натисніть будь ласка ${FORCE}`
 
 module.exports = async (msg, match) => {
   const plus = ['+', PLUS].includes(match[0])
 
   const user = await User.findOne({ id: msg.from.id })
 
-  assert(user.plus !== plus, `${user.getName()} я вже запамятав ваш вибір ${ROBO}`)
+  assert(user.plus !== plus, `Я вже запамятав ваш вибір`)
 
   const training = await Training.findOne({
     group: user.group,

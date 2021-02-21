@@ -1,7 +1,7 @@
 'use strict'
 
 const assert = require('assert')
-const { SORRY, PLUS } = require('../constatnts/emoji')
+const { PLUS } = require('../constatnts/emoji')
 
 module.exports = async msg => {
   const user = await User.findOne({ id: msg.from.id })
@@ -10,7 +10,7 @@ module.exports = async msg => {
     date : { $gt: Date.now() },
   }).sort({ date: -1 })
 
-  assert(training, `Покищо не створено жодного тренування ${SORRY}`)
+  assert(training, `Покищо не створено жодного тренування`)
 
   user.group = training.group
 

@@ -1,6 +1,7 @@
 'use strict'
 
 require('./events')
+require('./callbacks')
 
 const { SECOND } = require('./utils/date')
 

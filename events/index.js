@@ -1,17 +1,21 @@
 'use strict'
 
 const assert = require("assert")
-const { ABOUT_MESSAGE } = require("../constatnts/messages")
-const { START } = require("../constatnts/routes")
+const { setGroup, createTraining } = require("../callbacks/actions")
+const { HELP_MESSAGE } = require("../constatnts/messages")
+const { START } = require("../constatnts/app")
 const { ROBO } = require("../constatnts/emoji")
+
+const onHelp = msg => Bot.sendMessage(msg.chat.id, HELP_MESSAGE)
+
 const EVENTS = [
   {
     regExp: /^\/start$/,
     module: require('./on-start'),
   },
   {
-    regExp: /^\/about$/,
-    module: msg => Bot.sendMessage(msg.chat.id, ABOUT_MESSAGE),
+    regExp: /^\/help$/,
+    module: onHelp,
   },
   {
     regExp: /^[+-➕➖]$/i,
@@ -23,11 +27,11 @@ const EVENTS = [
   },
   {
     regExp: /^\/setgroup/,
-    module: require('./on-set-group'),
+    module: require('./on-choose-group')(setGroup),
   },
   {
-    regExp: /^\/addtraining/,
-    module: require('./on-add-training'),
+    regExp: /^\/createtraining/,
+    module: require('./on-choose-group')(createTraining),
   },
   {
     regExp: /^\/info$/,
@@ -37,6 +41,10 @@ const EVENTS = [
     regExp: /\/add(sticker|animation) (\blike|dislike)$/g,
     module: require('./on-add-file'),
   },
+  {
+    regExp: /\/creategroup(\s)?([a-я]-\d)?/g,
+    module: require('./on-create-group'),
+  }
 ]
 
 const onTextHandler = event => async (msg, match) => {
@@ -46,14 +54,14 @@ const onTextHandler = event => async (msg, match) => {
 
   try {
     if (!start) {
-      const eMessage = `Для початку роботи зі мною ${ROBO} Вам потрібно виконати команду ${START}`
+      const eMessage = `Для початку роботи зі мною, Вам необхідно виконати команду ${START}`
 
       assert(await User.exists({ id: msg.from.id }), eMessage)
     }
 
     await event.module(msg, match)
   } catch (e) {
-    await Bot.sendMessage(msg.chat.id, e.message)
+    await Bot.sendMessage(msg.chat.id, `${msg.username}, ${e.message} ${ROBO}`)
   }
 }
 
@@ -62,5 +70,7 @@ for (const event of EVENTS) {
 }
 
 Bot.on('message', require('./on-message'))
+
+// TODO: new_chat_members, left_chat_member
 
 module.exports = EVENTS

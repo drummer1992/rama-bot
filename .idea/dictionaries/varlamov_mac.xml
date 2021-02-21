@@ -2,6 +2,8 @@
   <dictionary name="varlamov_mac">
     <words>
       <w>addtraining</w>
+      <w>creategroup</w>
+      <w>createtraining</w>
       <w>robo</w>
       <w>setgroup</w>
       <w>vandama</w>
