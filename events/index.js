@@ -1,9 +1,16 @@
 'use strict'
 
 const assert = require("assert")
+const { ABOUT_MESSAGE } = require("../constatnts/messages")
+const { START } = require("../constatnts/routes")
+const { BOSS } = require("../constatnts/emoji")
 const EVENTS = [
   {
-    regExp: /\/(start)/g,
+    regExp: /^\/about$/,
+    module: msg => Bot.sendMessage(msg.chat.id, ABOUT_MESSAGE),
+  },
+  {
+    regExp: /^\/start$/,
     module: require('./on-start'),
   },
   {
@@ -11,17 +18,21 @@ const EVENTS = [
     module: require('./on-plus'),
   },
   {
-    regExp: /^\/setgroup(\s[вдя]-[12])?/g,
+    regExp: /^\/setgroup/,
     module: require('./on-set-group'),
   },
   {
-    regExp: /^\/addtraining ([вдя]-[12])(\s\d\d:\d\d)?$/g,
+    regExp: /^\/addtraining/,
     module: require('./on-add-training'),
   },
   {
-    regExp: /\/info/,
+    regExp: /^\/info$/,
     module: require('./on-info'),
-  }
+  },
+  {
+    regExp: /\/add(sticker|animation) (\blike|dislike)$/g,
+    module: require('./on-add-file'),
+  },
 ]
 
 const onTextHandler = event => async (msg, match) => {
@@ -31,7 +42,7 @@ const onTextHandler = event => async (msg, match) => {
 
   try {
     if (!start) {
-      const eMessage = 'Человечка сначала нужно поставить на контроль 😎. /start'
+      const eMessage = `Человечка сначала нужно поставить на контроль ${BOSS}. ${START}`
 
       assert(await User.exists({ id: msg.from.id }), eMessage)
     }
@@ -45,5 +56,7 @@ const onTextHandler = event => async (msg, match) => {
 for (const event of EVENTS) {
   Bot.onText(event.regExp, onTextHandler(event))
 }
+
+Bot.on('message', require('./on-message'))
 
 module.exports = EVENTS

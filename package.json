@@ -4,12 +4,14 @@
   "description": "",
   "main": "bot.js",
   "scripts": {
-    "start": "nodemon ./bootstrap.js"
+    "start": "node ./bootstrap.js",
+    "debug": "nodemon ./bootstrap.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dateformat": "^4.5.1",
     "dotenv": "^8.2.0",
     "mongodb": "^3.6.4",
     "mongoose": "^5.11.17",

@@ -2,6 +2,8 @@
 
 require('./models/user')
 require('./models/training')
+require('./models/reaction-file')
+require('./models/scheduled-message')
 
 module.exports = () => require('mongoose')
   .connect(

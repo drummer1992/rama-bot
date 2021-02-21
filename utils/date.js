@@ -96,11 +96,21 @@ exports.getDate = () => {
   return exports.isLocal() ? now : exports.setTimezoneOffset(now, UA_TIME_ZONE_OFFSET)
 }
 
-exports.getDate.withTime = (hours, minutes) => {
+exports.getDate.setTime = (hours, minutes) => {
   const date = exports.getDate()
 
   date.setHours(hours)
   date.setMinutes(minutes)
 
   return date
+}
+
+exports.hasSameTime = (date1, date2) => {
+  date1 = new Date(date1)
+  date2 = new Date(date2)
+
+  return date1.getFullYear() === date2.getFullYear()
+    && date1.getDate() === date2.getDate()
+    && date1.getHours() === date2.getHours()
+    && date1.getMinutes() === date2.getMinutes()
 }

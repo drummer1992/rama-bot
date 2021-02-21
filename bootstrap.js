@@ -23,3 +23,5 @@ main().catch(e => {
 
   process.exit(-1)
 })
+
+Bot.on('polling_error', console.error)

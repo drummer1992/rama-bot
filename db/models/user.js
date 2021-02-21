@@ -1,6 +1,7 @@
 'use strict'
 
 const mongoose = require('mongoose')
+const { PLUS, MINUS } = require("../../constatnts/emoji")
 
 const schema = new mongoose.Schema({
   firstName: mongoose.Schema.Types.String,
@@ -23,6 +24,14 @@ const schema = new mongoose.Schema({
     index   : true,
   },
 })
+
+schema.methods.getName = function () {
+  return this.firstName || this.lastName || this.username
+}
+
+schema.methods.getStat = function () {
+  return `${this.getName()} ${this.plus ? PLUS : MINUS}`
+}
 
 const User = mongoose.model('User', schema)
 

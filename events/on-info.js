@@ -1,31 +1,21 @@
 'use strict'
 
 const assert = require('assert')
-
-const pickName = user => {
-  let name = user.firstName || user.username || user.lastName
-
-  if (name) {
-    name += ` ${user.plus ? '➕' : '➖'}`
-  }
-
-  return name
-}
+const df = require('dateformat')
+const { CLOCK, HAPPY, SORRY } = require("../constatnts/emoji")
 
 module.exports = async msg => {
   const training = await Training.findOne({
     date: { $gt: Date.now() },
   }).sort({ date: -1 })
 
-  assert(training, 'Наступне тренування ще не створено')
+  assert(training, `Наступне тренування ще не створено ${SORRY}`)
 
   const users = await User.find({ group: training.group })
 
-  const message = `Найближче тренування в групи ${training.group}:\n` +
-    users.map(pickName)
-      .filter(Boolean)
+  const message = `Найближче тренування в групи ${training.group} ${HAPPY}. ${df(training.date, 'HH:MM')} ${CLOCK}\n` +
+    users.map(user => user.getStat())
       .join('\n')
-
 
   await Bot.sendMessage(msg.chat.id, message)
 }

@@ -1,16 +1,7 @@
 'use strict'
 
-const { MINUTE, getDate } = require('./date')
+const { MINUTE } = require('./date')
 
-module.exports = ({ hours, minutes }) => fn => {
-  const interval = setInterval(() => {
-    const date = getDate()
-
-    const hoursMatch = hours === date.getHours()
-    const minutesMatch = minutes === date.getMinutes()
-
-    if (hoursMatch && minutesMatch) {
-      fn(interval)
-    }
-  }, MINUTE)
+module.exports = (fn, period = MINUTE) => {
+  const interval = setInterval(() => fn(interval), period)
 }
