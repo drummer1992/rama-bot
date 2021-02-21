@@ -6,12 +6,12 @@ const { START } = require("../constatnts/routes")
 const { ROBO } = require("../constatnts/emoji")
 const EVENTS = [
   {
-    regExp: /^\/about$/,
-    module: msg => Bot.sendMessage(msg.chat.id, ABOUT_MESSAGE),
-  },
-  {
     regExp: /^\/start$/,
     module: require('./on-start'),
+  },
+  {
+    regExp: /^\/about$/,
+    module: msg => Bot.sendMessage(msg.chat.id, ABOUT_MESSAGE),
   },
   {
     regExp: /^[+-➕➖]$/i,
