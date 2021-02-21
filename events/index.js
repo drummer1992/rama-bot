@@ -40,7 +40,7 @@ const EVENTS = [
 ]
 
 const onTextHandler = event => async (msg, match) => {
-  const start = match[1] === 'start'
+  const start = msg.text === START
 
   msg.username = msg.from.first_name || msg.from.last_name || msg.from.username
 
