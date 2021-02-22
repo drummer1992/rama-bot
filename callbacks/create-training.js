@@ -6,11 +6,11 @@ const { getDate } = require('../utils/date')
 
 const { FUN, CLOCK, ARM, HAPPY, PLUS, MINUS, SHIT, SNOW_STYLE, WATER, CRAZY } = require('../constatnts/emoji')
 
-const hourMessage = group => `Група ${group}, у вас трєня ${ARM} через годину ${CLOCK}.\n\n` +
+const hourMessage = group => `Група ${group}, у вас трєнування ${ARM} через годину ${CLOCK}.\n\n` +
   `Гостріть лижі ${SNOW_STYLE} і не забувайте водичку ${WATER}`
 
-const trainingStartMessage = group => `Група ${group}, удачної трєні ${ARM}\n\n`
-  + `Памятайте, багато бурпєй не буває ${CRAZY}`
+const trainingStartMessage = group => `Група ${group}, бажаю вам успішного тренування, ви найкращі ${ARM}\n\n`
+  + `Памятайте, багато бурпєй не буває ${CRAZY} і тренер дурного не порадить ${FUN}`
 
 module.exports = async (msg, { g: groupName, u: userId }) => {
   const chatId = msg.message.chat.id
@@ -71,7 +71,7 @@ module.exports = async (msg, { g: groupName, u: userId }) => {
     message += `Учасники ${groupName}:\n` + users.map(user => user.getStat()).join('\n')
   }
 
-  message += `\n\nПостав ${PLUS} якщо прийдеш, або ${MINUS} раз падаєш на мороз ${SHIT}`
+  message += `\n\nПоставте ${PLUS} якщо прийдете, або ${MINUS} якщо пропускаєте ${SHIT}`
 
   const reminding = [
     new ScheduledMessage({
