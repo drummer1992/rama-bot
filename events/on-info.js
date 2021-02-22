@@ -16,7 +16,7 @@ module.exports = async msg => {
   const users = await User.find({ group: training.group })
 
   const message = `Найближче тренування в групи ${training.group.name} ${HAPPY}\n\n` +
-    `${df(getDate(training.date), 'HH:MM')} ${CLOCK}\n` +
+    `${df(training.date, 'HH:MM')} ${CLOCK}\n` +
     users.map(user => user.getStat())
       .join('\n')
 
