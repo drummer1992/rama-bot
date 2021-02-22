@@ -18,6 +18,14 @@ Bot.on('callback_query', async msg => {
 
     await flow(msg, action.payload)
   } catch (e) {
-    await Bot.sendMessage(msg.message.chat.id, `${msg.username}, ${e.message} ${ROBO}`)
+    const user = await User.findOne({ id: msg.from.id }, {
+      username : 1,
+      firstName: 1,
+      lastName : 1,
+    })
+
+    const username = user ? user.getName() : msg.username
+
+    await Bot.sendMessage(msg.message.chat.id, `${username}, ${e.message} ${ROBO}`)
   }
 })

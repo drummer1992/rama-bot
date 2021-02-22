@@ -58,14 +58,22 @@ const onTextHandler = event => async (msg, match) => {
 
   try {
     if (!start) {
-      const eMessage = `Для початку роботи зі мною, Вам необхідно виконати команду ${START}`
+      const eMessage = `Для початку роботи зі мною, Вам необхідно натиснути ${START}`
 
       assert(await User.exists({ id: msg.from.id }), eMessage)
     }
 
     await event.module(msg, match)
   } catch (e) {
-    await Bot.sendMessage(msg.chat.id, `${msg.username}, ${e.message} ${ROBO}`)
+    const user = await User.findOne({ id: msg.from.id }, {
+      username : 1,
+      firstName: 1,
+      lastName : 1,
+    })
+
+    const username = user ? user.getName() : msg.username
+
+    await Bot.sendMessage(msg.chat.id, `${username}, ${e.message} ${ROBO}`)
   }
 }
 
