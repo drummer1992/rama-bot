@@ -42,11 +42,11 @@ const EVENTS = [
     module: require('./on-add-file'),
   },
   {
-    regExp: /\/creategroup(\s)?([a-я]-\d)?/g,
+    regExp: /^\/creategroup(\s)?([a-я]-\d)?/g,
     module: require('./on-create-group'),
   },
   {
-    regExp: /\/changegrooptime(\s)?([a-я]-\d)?(\s)?(\d\d:\d\d)?/g,
+    regExp: /^\/changegrooptime(\s)?([a-я]-\d)?(\s)?(\d\d:\d\d)?/g,
     module: require('./on-change-group-time'),
   }
 ]
