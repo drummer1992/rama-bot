@@ -19,7 +19,7 @@ module.exports = async msg => {
     await Bot.sendMessage(msg.chat.id, successMessage(msg.username))
   } catch (e) {
     if (e.code === ALREADY_EXISTS) {
-      e.message = `${msg.username} я вже й так працюю для Вас`
+      e.message = `Я вже й так працюю для Вас`
     }
 
     throw e
