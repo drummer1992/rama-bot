@@ -10,11 +10,11 @@ const onHelp = msg => Bot.sendMessage(msg.chat.id, HELP_MESSAGE)
 
 const EVENTS = [
   {
-    regExp: /^\/start$/,
+    regExp: /^\/start/,
     module: require('./on-start'),
   },
   {
-    regExp: /^\/help$/,
+    regExp: /^\/help/,
     module: onHelp,
   },
   {
@@ -22,7 +22,7 @@ const EVENTS = [
     module: require('./on-plus'),
   },
   {
-    regExp: /^\/force$/i,
+    regExp: /^\/force/i,
     module: require('./on-force'),
   },
   {
@@ -34,11 +34,11 @@ const EVENTS = [
     module: require('./on-choose-group')(createTraining),
   },
   {
-    regExp: /^\/info$/,
+    regExp: /^\/info/,
     module: require('./on-info'),
   },
   {
-    regExp: /\/add(sticker|animation) (\blike|dislike)$/g,
+    regExp: /\/add(sticker|animation) (\blike|dislike)/g,
     module: require('./on-add-file'),
   },
   {
