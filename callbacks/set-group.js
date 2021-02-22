@@ -10,7 +10,7 @@ module.exports = async (msg, { g: groupName, u: userId }) => {
   const chatId = msg.message.chat.id
 
   assert(user, `Користувач по id ${user} не знайдений`)
-  assert(user.id === msg.from.id, `Це я ${user.getName()} запитував`)
+  assert(user.id === msg.from.id, `Я запитував у ${user.getName()}`)
 
   const group = await Group.findOne({
     name  : groupName,
