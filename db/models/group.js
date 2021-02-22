@@ -3,14 +3,18 @@
 const mongoose = require('mongoose')
 
 const schema = new mongoose.Schema({
-  name   : {
+  name        : {
     type    : mongoose.Schema.Types.String,
     required: true,
     unique  : true,
   },
-  chatId : {
+  chatId      : {
     type    : mongoose.Schema.Types.String,
     required: true,
+  },
+  trainingTime: {
+    type   : mongoose.Schema.Types.String,
+    default: '19:30',
   },
 })
 

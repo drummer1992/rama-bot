@@ -12,12 +12,19 @@ const hourMessage = group => `Група ${group}, у вас трєня ${ARM} �
 const trainingStartMessage = group => `Група ${group}, удачної трєні ${ARM}\n\n`
   + `Памятайте, багато бурпєй не буває ${CRAZY}`
 
-const TIME_BY_DEFAULT = '19:30'
-
 module.exports = async (msg, { g: groupName, u: userId }) => {
   const chatId = msg.message.chat.id
 
-  const time = TIME_BY_DEFAULT
+  const [group, trainer] = await Promise.all([
+    Group.findOne({ name: groupName }),
+    User.findOne({ id: userId }),
+  ])
+
+  assert(group, 'Групу не знайдено')
+  assert(trainer, 'Тренера не знайдено')
+  assert(trainer.isTrainer, `Ви не тренер`)
+
+  const time = group.trainingTime
 
   const [hours, minutes] = time.split(':').map(Number)
 
@@ -31,21 +38,12 @@ module.exports = async (msg, { g: groupName, u: userId }) => {
 
   assert(dateNow < trainingDate, invalidTimeMessage)
 
-  const [group, trainer] = await Promise.all([
-    Group.findOne({ name: groupName }),
-    User.findOne({ id: userId }),
-  ])
-
   assert(trainer.id === msg.from.id, `Нажаль зараз групу встановлює ${trainer.getName()}`)
 
   assert(!await Training.exists({
     date: trainingDate,
     group,
   }), `Тренування вже створено на цей час: ${df(trainingDate, 'HH:MM')}`)
-
-  assert(trainer, `Тренера не знайдено`)
-  assert(trainer.isTrainer, `Ви не тренер`)
-  assert(group, `Групу не знайдено`)
 
   trainer.group = group
   trainer.plus = true

@@ -7,7 +7,7 @@ const { CLOCK, HAPPY } = require("../constatnts/emoji")
 
 module.exports = async msg => {
   const training = await Training.findOne({
-    date: { $gt: Date.now() },
+    date: { $gt: getDate() },
   }).sort({ date: -1 })
     .populate('group')
 

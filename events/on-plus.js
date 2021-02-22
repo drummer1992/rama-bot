@@ -13,14 +13,14 @@ module.exports = async (msg, match) => {
 
   const user = await User.findOne({ id: msg.from.id })
 
-  assert(user.plus !== plus, `Я вже запамятав ваш вибір`)
-
   const training = await Training.findOne({
     group: user.group,
     date : { $gt: Date.now() },
   }).sort({ date: -1 })
+    .populate('group')
 
   assert(training, rejectMessage(user.getName()))
+  assert(user.plus !== plus, `Я вже запамятав ваш вибір`)
 
   user.plus = plus
 
