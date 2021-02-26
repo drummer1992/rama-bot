@@ -4,11 +4,11 @@ const { BotError } = require('../errors')
 const { ROBO } = require('../constatnts/emoji')
 
 module.exports = function (fn) {
-  return async function (...args) {
+  return async function (msg, ...rest) {
     let responseMessage
 
     try {
-      responseMessage = await fn(...args)
+      responseMessage = await fn(msg, ...rest)
     } catch (e) {
       if (e instanceof BotError) {
         responseMessage = e.message
@@ -19,11 +19,9 @@ module.exports = function (fn) {
       }
     }
 
-    const [{ from, message, chat }] = args
-
-    const username = from.first_name || from.last_name || from.username
-    const chatId = chat && chat.id || message.chat.id
-
-    responseMessage && await Bot.sendMessage(chatId, `${username}, ${responseMessage} ${ROBO}`)
+    responseMessage && await Bot.sendMessage(
+      msg.getChatId(),
+      `${msg.getUserName()}, ${responseMessage} ${ROBO}`,
+    )
   }
 }

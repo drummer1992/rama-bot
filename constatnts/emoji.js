@@ -15,3 +15,12 @@ exports.SNOW_STYLE = `⛷`
 exports.WATER = `💧`
 exports.CRAZY = `😜`
 exports.ROBO = `🤖`
+exports.RAMA_MEDAL = '🎖'
+
+exports.MEDALS = [
+  '🏆',
+  '🥇',
+  '🥈',
+  '🥉',
+  '🎖',
+]

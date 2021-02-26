@@ -1,6 +1,6 @@
 'use strict'
 
-const t = exports.ActionTypes = {
+exports.ActionTypes = {
   NOTIFY          : 'NOTIFY',
   BUTTON_SELECTION: 'BUTTON_SELECTION',
 }
@@ -17,8 +17,8 @@ const e = exports.Event = {
 }
 
 exports.Flow = {
-  [e.SET_GROUP]      : [e.CHOOSE_GROUP, e.SET_GROUP],
-  [e.CREATE_TRAINING]: [e.CHOOSE_GROUP, e.CHOOSE_TIME, e.CREATE_TRAINING],
+  SET_GROUP      : [e.CHOOSE_GROUP, e.SET_GROUP],
+  CREATE_TRAINING: [e.CHOOSE_GROUP, e.CHOOSE_TIME, e.CREATE_TRAINING],
 }
 
 

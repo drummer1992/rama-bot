@@ -1,8 +1,9 @@
 'use strict'
 
 const decorate = require('../decorators')
+const { assertUserHasAccess } = require("../assertions")
 
-const { ActionTypes: t, Event: e } = require('../constatnts/action')
+const { ActionTypes: t, Event: e, Flow: f } = require('../constatnts/action')
 
 const ACTION_HANDLERS = {
   [e.SET_GROUP]      : require('./set-group'),
@@ -15,30 +16,26 @@ Bot.on('callback_query', decorate(async msg => {
 
   const action = await Action.findOne({ id, type: t.BUTTON_SELECTION })
 
-  if (action && action.userId === msg.getUserId()) {
-    let { flow: actionFlow, step } = action.payload
+  if (
+    action
+    && action.userId === msg.getUserId()
+    && !action.payload.processed
+  ) {
+    const { payload: { step, data, flow } } = action
 
-    const currentEvent = actionFlow[step]
-    const nextEvent = actionFlow[step + 1]
+    assertUserHasAccess(msg.getUser(), flow)
 
-    const shouldDeleteAction = !actionFlow[step + 2]
+    const result = data[decision]
 
-    const currentFlowData = action.payload[currentEvent].buttons[decision]
+    const handlerName = f[flow][step + 1]
 
-    action.payload[currentEvent].decision = decision
+    const message = await ACTION_HANDLERS[handlerName](msg, result, action)
 
-    const flow = ACTION_HANDLERS[nextEvent]
+    action.payload.result = result
+    action.payload.processed = true
 
-    const responseMessage = await flow(msg, currentFlowData, action)
+    await Action.updateOne({ id }, action)
 
-    action.payload.step = step + 1
-
-    if (shouldDeleteAction) {
-      await Action.deleteOne({ _id: action._id })
-    } else {
-      await Action.updateOne({ _id: action._id }, action)
-    }
-
-    return responseMessage
+    return message
   }
 }))

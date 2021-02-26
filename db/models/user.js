@@ -39,7 +39,7 @@ schema.methods.getName = function () {
   return this.firstName || this.lastName || this.username
 }
 
-schema.methods.getStat = function () {
+schema.methods.getPlusStatus = function () {
   return `${this.getName()} ${this.plus ? PLUS : MINUS}`
 }
 

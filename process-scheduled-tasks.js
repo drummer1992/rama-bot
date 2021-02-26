@@ -2,14 +2,18 @@
 
 const { getDate, hasSameTime } = require("./utils/date")
 const { ActionTypes: t, Event: e } = require("./constatnts/action")
+const { RATING } = require("./constatnts/app")
 
-const { FUN, CLOCK, ARM, HAPPY, PLUS, MINUS, SHIT, SNOW_STYLE, WATER, CRAZY } = require('./constatnts/emoji')
+const { CLOCK, ARM, HAPPY, PLUS, MINUS, SHIT, SNOW_STYLE, WATER, RAMA_MEDAL } = require('./constatnts/emoji')
 
-const hourMessage = group => `Група ${group}, у вас трєнування ${ARM} через годину ${CLOCK}.\n\n` +
+const hourToTrainingMessage = group => `Група ${group}, у вас тренування ${ARM} через годину ${CLOCK}.\n\n` +
   `Гостріть лижі ${SNOW_STYLE} і не забувайте водичку ${WATER}`
 
-const trainingStartMessage = group => `Група ${group}, бажаю вам успішного тренування, ви найкращі ${ARM}\n\n`
-  + `Памятайте, багато бурпєй не буває ${CRAZY} і тренер дурного не порадить ${FUN}`
+const trainingStartsMessage = group => `Група ${group}, бажаю вам успішного тренування, ви найкращі ${ARM}\n\n`
+
+const trainingEndsMessage = group => `Вітаю вас група ${group}, сьогодні ви стали ще на крок ближче до Рами Вандама\n`
+  + `Кожен з вас отримує по Вандамській медалькі ${RAMA_MEDAL}\n\n`
+  + `Щоб відкрити рейтинг натисніть ${RATING}`
 
 const HANDLERS = {
   [t.NOTIFY]: {
@@ -24,13 +28,21 @@ const HANDLERS = {
       await Bot.sendMessage(group.chatId, message)
     },
     [e.HOUR_TO_TRAINING]: async ({ groupId }) => {
+      const group = await Group.findOne({ _id: groupId })
 
+      await Bot.sendMessage(group.chatId, hourToTrainingMessage(group.name))
     },
     [e.TRAINING_STARTS] : async ({ groupId }) => {
+      const group = await Group.findOne({ _id: groupId })
 
+      await Bot.sendMessage(group.chatId, trainingStartsMessage(group.name))
     },
     [e.TRAINING_END]    : async ({ groupId }) => {
+      const group = await Group.findOne({ _id: groupId })
 
+      await User.updateMany({ group, plus: true }, { $inc: { visitCounter: 1 } })
+
+      await Bot.sendMessage(group.chatId, trainingEndsMessage(group.name))
     },
   }
 }

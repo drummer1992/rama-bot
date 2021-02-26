@@ -1,13 +1,14 @@
 'use strict'
 
 const df = require('dateformat')
+const { keyBy } = require("../utils/array")
 const { botAssert } = require('../errors')
 const { getDate, addDays, addMinutes } = require('../utils/date')
 
 const { Event: e, ActionTypes: t } = require('../constatnts/action')
 
 module.exports = async (msg, { time }, action) => {
-  const trainer = msg.getUser()
+  const user = msg.getUser()
 
   const [hours, minutes] = time.split(':').map(Number)
 
@@ -22,16 +23,21 @@ module.exports = async (msg, { time }, action) => {
     trainingDate = addDays(trainingDate, 1)
   }
 
-  const chooseGroupData = action.payload[e.CHOOSE_GROUP]
-  const group = chooseGroupData.buttons[chooseGroupData.decision]
+  const flowData = await Action.find({ 'payload.flowId': action.payload.flowId })
+    .then(result => result.map(action => action.payload))
+    .then(result => result.flat())
+
+  const dataByEventMap = keyBy(flowData, 'event')
+
+  const group = dataByEventMap[e.CHOOSE_GROUP].result
 
   botAssert(!await Training.exists({
     date: trainingDate,
     group,
   }), `Тренування вже створено на цей час: ${df(trainingDate, 'HH:MM')}`)
 
-  trainer.group = group
-  trainer.plus = true
+  user.group = group
+  user.plus = true
 
   const isLessThanHourToTraining = hours - 1 < dateNow.getHours()
 
@@ -55,11 +61,11 @@ module.exports = async (msg, { time }, action) => {
   }
 
   await Promise.all([
-    User.updateMany({ _id: { $ne: trainer._id }, group, }, { $set: { plus: false } }),
-    Training.create({ trainer, group, date: trainingDate }),
+    User.updateMany({ _id: { $ne: user._id }, group, }, { $set: { plus: false } }),
+    Training.create({ trainer: user, group, date: trainingDate }),
     Group.updateOne({ _id: group._id }, { trainingTime: time }),
     Action.insertMany(actions),
-    trainer.save(),
+    user.save(),
   ])
 
   return 'OK'

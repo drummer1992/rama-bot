@@ -1,13 +1,16 @@
 'use strict'
 
-const { botAssert } = require('../errors')
 const generateUUID = require('../utils/uuid')
+const { botAssert } = require('../errors')
 const { enrichTaskData } = require("../utils/buttons")
+const { assertUserHasAccess } = require("../assertions")
 
 const { HAPPY } = require("../constatnts/emoji")
 const { Flow: f, Event: e, ActionTypes: t } = require("../constatnts/action")
 
-module.exports = event => async msg => {
+module.exports = flowName => async msg => {
+  assertUserHasAccess(msg.getUser(), flowName)
+
   const groups = await Group.find({ chatId: msg.chat.id })
 
   botAssert(groups.length, `Поки-що, не створено жодної групи`)
@@ -30,9 +33,12 @@ module.exports = event => async msg => {
     id,
     userId : msg.getUserId(),
     payload: {
-      [e.CHOOSE_GROUP]: { buttons: buttonsData },
-      flow            : f[event],
-      step            : 0,
+      flowId   : id,
+      step     : f[flowName].indexOf(e.CHOOSE_GROUP),
+      flow     : flowName,
+      data     : buttonsData,
+      processed: false,
+      event    : e.CHOOSE_GROUP,
     },
     type   : t.BUTTON_SELECTION,
   })

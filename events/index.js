@@ -15,11 +15,11 @@ const EVENTS = [
     module: () => HELP_MESSAGE,
   },
   {
-    regExp: /^[+➕]|PLUS|ПЛЮС/i,
+    regExp: /^([+➕]|PLUS|ПЛЮС)/i,
     module: require('./on-make-decision')(PLUS),
   },
   {
-    regExp: /^[-➖]|MINUS|М([ИІ])НУС/i,
+    regExp: /^([-➖]|MINUS|М([ИІ])НУС)/i,
     module: require('./on-make-decision')(MINUS),
   },
   {
@@ -41,6 +41,10 @@ const EVENTS = [
   {
     regExp: /^\/creategroup(\s)?([a-я]-\d)?/g,
     module: require('./on-create-group'),
+  },
+  {
+    regExp: /^\/rating/g,
+    module: require('./on-rating'),
   },
 ]
 
