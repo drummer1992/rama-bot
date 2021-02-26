@@ -3,11 +3,7 @@
 const decorate = require('../decorators')
 const { HELP_MESSAGE } = require("../constatnts/messages")
 const { Event: e } = require("../constatnts/action")
-const { PLUS, MINUS } = require("../constatnts/emoji")
-
-const sendHelpMessage = async msg => {
-  await Bot.sendMessage(msg.getChatId(), HELP_MESSAGE)
-}
+const { PLUS, MINUS, ARM } = require("../constatnts/emoji")
 
 const EVENTS = [
   {
@@ -16,7 +12,9 @@ const EVENTS = [
   },
   {
     regExp: /^\/help/,
-    module: sendHelpMessage,
+    module: async msg => {
+      await Bot.sendMessage(msg.getChatId(), HELP_MESSAGE)
+    },
   },
   {
     regExp: /^([+➕]|PLUS|ПЛЮС)/i,
@@ -48,7 +46,11 @@ const EVENTS = [
   },
   {
     regExp: /^\/rating/g,
-    module: require('./on-rating'),
+    module: async msg => {
+      const rating = await require('../rating/get')()
+
+      await Bot.sendMessage(msg.getChatId(), `Рейтинг Вандамів ${ARM}:\n\n${rating}`)
+    },
   },
 ]
 

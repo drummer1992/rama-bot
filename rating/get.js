@@ -21,9 +21,6 @@ module.exports = async () => {
     return medal
   }
 
-  const rating = users.map((user, i) =>
-    `${user.getName()} ${user.visitCounter} ${resolveMedal(user, i)}`).join('\n'
-  )
-
-  return `Ось рейтинг наших Вандамів:\n\n${rating}\n`
+  return users.map((user, i) =>
+    `${user.getName()} ${user.visitCounter} ${resolveMedal(user, i)}`).join('\n')
 }
