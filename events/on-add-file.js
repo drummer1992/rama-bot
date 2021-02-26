@@ -6,7 +6,7 @@ module.exports = async (msg, match) => {
   const type = match[1]
   const reaction = match[2]
 
-  Bot.onReplyToMessage(msg.chat.id, msg.message_id, async reply => {
+  Bot.onReplyToMessage(msg.getChatId(), msg.message_id, async reply => {
     const file = reply[type]
 
     assert(file, `Файли з типом ${type} не підтримуються`)

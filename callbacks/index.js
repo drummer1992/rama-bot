@@ -1,31 +1,44 @@
 'use strict'
 
-const { Callback: { SET_GROUP, CREATE_TRAINING } } = require('../constatnts/app')
-const { ROBO } = require('../constatnts/emoji')
+const decorate = require('../decorators')
 
-const CALLBACKS = {
-  [SET_GROUP]      : require('./set-group'),
-  [CREATE_TRAINING]: require('./create-training'),
+const { ActionTypes: t, Event: e } = require('../constatnts/action')
+
+const ACTION_HANDLERS = {
+  [e.SET_GROUP]      : require('./set-group'),
+  [e.CREATE_TRAINING]: require('./create-training'),
+  [e.CHOOSE_TIME]    : require('./set-time'),
 }
 
-Bot.on('callback_query', async msg => {
-  msg.username = msg.from.first_name || msg.from.last_name || msg.from.username
+Bot.on('callback_query', decorate(async msg => {
+  const { decision, id } = JSON.parse(msg.data)
 
-  try {
-    const action = JSON.parse(msg.data)
+  const action = await Action.findOne({ id, type: t.BUTTON_SELECTION })
 
-    const flow = CALLBACKS[action.type]
+  if (action && action.userId === msg.getUserId()) {
+    let { flow: actionFlow, step } = action.payload
 
-    await flow(msg, action.payload)
-  } catch (e) {
-    const user = await User.findOne({ id: msg.from.id }, {
-      username : 1,
-      firstName: 1,
-      lastName : 1,
-    })
+    const currentEvent = actionFlow[step]
+    const nextEvent = actionFlow[step + 1]
 
-    const username = user ? user.getName() : msg.username
+    const shouldDeleteAction = !actionFlow[step + 2]
 
-    await Bot.sendMessage(msg.message.chat.id, `${username}, ${e.message} ${ROBO}`)
+    const currentFlowData = action.payload[currentEvent].buttons[decision]
+
+    action.payload[currentEvent].decision = decision
+
+    const flow = ACTION_HANDLERS[nextEvent]
+
+    const responseMessage = await flow(msg, currentFlowData, action)
+
+    action.payload.step = step + 1
+
+    if (shouldDeleteAction) {
+      await Action.deleteOne({ _id: action._id })
+    } else {
+      await Action.updateOne({ _id: action._id }, action)
+    }
+
+    return responseMessage
   }
-})
+}))

@@ -6,6 +6,6 @@ require('./callbacks')
 const { SECOND } = require('./utils/date')
 
 const timer = require('./utils/timer')
-const sendScheduledMessages = require('./send-scheduled-messages')
+const processScheduledTasks = require('./process-scheduled-tasks')
 
-timer(sendScheduledMessages, SECOND * 30)
+timer(processScheduledTasks, SECOND * 20)

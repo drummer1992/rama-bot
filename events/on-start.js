@@ -1,11 +1,10 @@
 'use strict'
 
+const { BotError } = require('../errors')
+
 const { ROBO } = require('../constatnts/emoji')
 const { HELP } = require('../constatnts/app')
 const { Codes: { ALREADY_EXISTS } } = require('../constatnts/error')
-
-const successMessage = name => `${name}, з цього моменту ви можете звернутись до мене за допомогою команд ${ROBO}\n`
-+ `Щоб подивитися список доступних команд натисніть ${HELP}`
 
 module.exports = async msg => {
   try {
@@ -16,10 +15,11 @@ module.exports = async msg => {
       username : msg.from.username,
     })
 
-    await Bot.sendMessage(msg.chat.id, successMessage(msg.username))
+    return `З цього моменту ви можете звернутись до мене за допомогою команд ${ROBO}\n`
+      + `Щоб подивитися список доступних команд натисніть ${HELP}`
   } catch (e) {
     if (e.code === ALREADY_EXISTS) {
-      e.message = `Я вже й так працюю для Вас`
+      throw new BotError(`Я вже й так працюю для Вас`)
     }
 
     throw e

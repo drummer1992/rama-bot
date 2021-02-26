@@ -15,6 +15,10 @@ const schema = new mongoose.Schema({
     type   : mongoose.Schema.Types.Boolean,
     default: false,
   },
+  isAdmin     : {
+    type   : mongoose.Schema.Types.Boolean,
+    default: false,
+  },
   group       : {
     type: mongoose.Schema.Types.ObjectId,
     ref : 'Group',

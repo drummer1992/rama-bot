@@ -1,46 +1,31 @@
 'use strict'
 
-const assert = require('assert')
 const df = require('dateformat')
-const { getDate } = require('../utils/date')
+const { botAssert } = require('../errors')
+const { getDate, addDays, addMinutes } = require('../utils/date')
 
-const { FUN, CLOCK, ARM, HAPPY, PLUS, MINUS, SHIT, SNOW_STYLE, WATER, CRAZY } = require('../constatnts/emoji')
+const { Event: e, ActionTypes: t } = require('../constatnts/action')
 
-const hourMessage = group => `Група ${group}, у вас трєнування ${ARM} через годину ${CLOCK}.\n\n` +
-  `Гостріть лижі ${SNOW_STYLE} і не забувайте водичку ${WATER}`
-
-const trainingStartMessage = group => `Група ${group}, бажаю вам успішного тренування, ви найкращі ${ARM}\n\n`
-  + `Памятайте, багато бурпєй не буває ${CRAZY} і тренер дурного не порадить ${FUN}`
-
-module.exports = async (msg, { g: groupName, u: userId }) => {
-  const chatId = msg.message.chat.id
-
-  const [group, trainer] = await Promise.all([
-    Group.findOne({ name: groupName }),
-    User.findOne({ id: userId }),
-  ])
-
-  assert(group, 'Групу не знайдено')
-  assert(trainer, 'Тренера не знайдено')
-  assert(trainer.isTrainer, `Ви не тренер`)
-
-  const time = group.trainingTime
+module.exports = async (msg, { time }, action) => {
+  const trainer = msg.getUser()
 
   const [hours, minutes] = time.split(':').map(Number)
 
+  let trainingDate = getDate.setTime(hours, minutes)
+
   const dateNow = getDate()
-  const trainingDate = getDate.setTime(hours, minutes)
 
   trainingDate.setMilliseconds(0)
   trainingDate.setSeconds(0)
 
-  const invalidTimeMessage = `В нас немає машини часу ${FUN}. ${time} ${CLOCK}`
+  if (dateNow > trainingDate) {
+    trainingDate = addDays(trainingDate, 1)
+  }
 
-  assert(dateNow < trainingDate, invalidTimeMessage)
+  const chooseGroupData = action.payload[e.CHOOSE_GROUP]
+  const group = chooseGroupData.buttons[chooseGroupData.decision]
 
-  assert(trainer.id === msg.from.id, `Нажаль зараз групу встановлює ${trainer.getName()}`)
-
-  assert(!await Training.exists({
+  botAssert(!await Training.exists({
     date: trainingDate,
     group,
   }), `Тренування вже створено на цей час: ${df(trainingDate, 'HH:MM')}`)
@@ -48,50 +33,34 @@ module.exports = async (msg, { g: groupName, u: userId }) => {
   trainer.group = group
   trainer.plus = true
 
-  await User.updateMany({
-    id: { $ne: trainer.id },
-    group,
-  }, { $set: { plus: false } })
-
-  await trainer.save()
-
-  const users = await User.find({ group: group })
-
-  await Training.create({
-    trainer,
-    group,
-    date: trainingDate,
-  })
-
-  let message = `Всім привіт ${HAPPY}!\n\n` +
-    `Сьогодні в ${time} ${CLOCK}\n\n` +
-    `${msg.username} ${ARM.repeat(3)} зазиває на тренування групу ${groupName}\n\n`
-
-  if (users.length) {
-    message += `Учасники ${groupName}:\n` + users.map(user => user.getStat()).join('\n')
-  }
-
-  message += `\n\nПоставте ${PLUS} якщо прийдете, або ${MINUS} якщо пропускаєте ${SHIT}`
-
-  const reminding = [
-    new ScheduledMessage({
-      chatId,
-      text: trainingStartMessage(groupName),
-      date: trainingDate,
-    }),
-  ]
-
   const isLessThanHourToTraining = hours - 1 < dateNow.getHours()
 
+  const buildAction = (event, date,) => new Action({
+    type   : t.NOTIFY,
+    payload: {
+      event,
+      date,
+      data: { groupId: group._id },
+    }
+  })
+
+  const actions = [
+    buildAction(e.TRAINING_CREATED, addMinutes(dateNow, 1)),
+    buildAction(e.TRAINING_STARTS, getDate.setTime(hours, minutes)),
+    buildAction(e.TRAINING_END, getDate.setTime(hours + 2.5, minutes)),
+  ]
+
   if (!isLessThanHourToTraining) {
-    reminding.push(new ScheduledMessage({
-      chatId,
-      text: hourMessage(groupName),
-      date: getDate.setTime(hours - 1, minutes),
-    }))
+    actions.push(buildAction(e.HOUR_TO_TRAINING, getDate.setTime(hours - 1, minutes)))
   }
 
-  await ScheduledMessage.insertMany(reminding)
+  await Promise.all([
+    User.updateMany({ _id: { $ne: trainer._id }, group, }, { $set: { plus: false } }),
+    Training.create({ trainer, group, date: trainingDate }),
+    Group.updateOne({ _id: group._id }, { trainingTime: time }),
+    Action.insertMany(actions),
+    trainer.save(),
+  ])
 
-  return Bot.sendMessage(chatId, message)
+  return 'OK'
 }
