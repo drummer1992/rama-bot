@@ -9,8 +9,8 @@ const { CREATE_GROUP } = require('../constatnts/app')
 module.exports = async (msg, match) => {
   const name = match[2]
 
-  botAssert(name, `Ви не корректно ввели команду, ось приклад: ${CREATE_GROUP} в-2`)
   botAssert(msg.getUser().isTrainer, `Нажаль тільки тренери можуть створювати групи`)
+  botAssert(name, `Ви не корректно ввели команду, ось приклад: ${CREATE_GROUP} в-2`)
 
   try {
     await Group.create({
