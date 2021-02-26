@@ -1,6 +1,6 @@
 'use strict'
 
-const { SET_GROUP, CREATE_TRAINING, INFO, FORCE, HELP, CREATE_GROUP, RATING } = require('./app')
+const { SET_GROUP, CREATE_TRAINING, INFO, HELP, CREATE_GROUP, RATING } = require('./app')
 const { HAPPY, ROBO, PLUS } = require('./emoji')
 
 exports.HELP_MESSAGE = `Привіт ${HAPPY}, я Rama Vandama Bot ${ROBO}, ось список моїх, доступних команд:\n\n`
@@ -10,5 +10,4 @@ exports.HELP_MESSAGE = `Привіт ${HAPPY}, я Rama Vandama Bot ${ROBO}, ос
   + `${CREATE_TRAINING} - створити тренування\n`
   + `${INFO} - подивитися інформацію про наступне тренування\n`
   + `${RATING} - подивитися рейтинг\n`
-  + `${FORCE} - записатися на найближче трунування, при цьому ви автоматично запишитесь в групу\n`
   + `${PLUS} - записатися на тренування\n`
