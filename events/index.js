@@ -5,6 +5,10 @@ const { HELP_MESSAGE } = require("../constatnts/messages")
 const { Event: e } = require("../constatnts/action")
 const { PLUS, MINUS } = require("../constatnts/emoji")
 
+const sendHelpMessage = async msg => {
+  await Bot.sendMessage(msg.getChatId(), HELP_MESSAGE)
+}
+
 const EVENTS = [
   {
     regExp: /^\/start/,
@@ -12,7 +16,7 @@ const EVENTS = [
   },
   {
     regExp: /^\/help/,
-    module: () => HELP_MESSAGE,
+    module: sendHelpMessage,
   },
   {
     regExp: /^([+➕]|PLUS|ПЛЮС)/i,
